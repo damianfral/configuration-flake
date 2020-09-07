@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   virtualisation.libvirtd = {
-    enable = true;
+    enable = false;
     qemuRunAsRoot = false;
   };
 

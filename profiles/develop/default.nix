@@ -1,38 +1,48 @@
 { pkgs, ... }: {
-  imports = [ ./zsh ./kakoune ./tmux ];
+  imports = [ ];
 
+  virtualisation.docker.enable = true;
   environment.shellAliases = { v = "$EDITOR"; };
-
-  environment.sessionVariables = {
-    PAGER = "less";
-    LESS = "-iFJMRWX -z-4 -x4";
-    LESSOPEN = "|${pkgs.lesspipe}/bin/lesspipe.sh %s";
-    EDITOR = "k";
-    VISUAL = "k";
-  };
-
   environment.systemPackages = with pkgs; [
-    clang
+
+    awscli
+    cfdyndns
+    circleci-cli
+    google-cloud-sdk
+    sops
+    vultr
+
+    docker-compose
+    dvtm
     file
-    git-crypt
     gnupg
-    less
+    jq
+    loc
+    mosh
     ncdu
     pass
-    tig
+    ripgrep
     tokei
+    tree
     wget
+
+    gitAndTools.git-hub
+    gitAndTools.git-open
+    gitAndTools.hub
+    git-crypt
+    tig
+
+    mongodb
+    postgresql
+    sqlite
+
+    niv
+    nixops
+    cachix
+
   ];
 
-  fonts = {
-    fonts = [ pkgs.dejavu_nerdfont ];
-    fontconfig.defaultFonts.monospace =
-      [ "DejaVu Sans Mono Nerd Font Complete Mono" ];
-  };
-
-  documentation.dev.enable = true;
-
+  documentation.dev.enable = false;
   programs.thefuck.enable = true;
-  programs.firejail.enable = true;
   programs.mtr.enable = true;
 }

@@ -2,11 +2,10 @@
 let inherit (builtins) readFile;
 in
 {
-  imports = [ ./sway ../develop ./xmonad ../network ./im ];
+  imports = [ ./xmonad ./im ];
 
   hardware.opengl.enable = true;
   hardware.opengl.driSupport = true;
-  hardware.pulseaudio.enable = true;
 
   boot = {
 
@@ -25,8 +24,8 @@ in
         text = ''
           [Settings]
           gtk-icon-theme-name=Papirus
-          gtk-theme-name=Adapta
-          gtk-cursor-theme-name=Adwaita
+          gtk-theme-name=Arc-Darker
+          gtk-cursor-theme-name=Papirus
         '';
         mode = "444";
       };
@@ -40,52 +39,41 @@ in
         let
           gtk = ''
             gtk-icon-theme-name="Papirus"
-            gtk-cursor-theme-name="Adwaita"
+            gtk-cursor-theme-name="Arc"
           '';
         in
         [
           ("${pkgs.writeText "iconrc" "${gtk}"}")
-          "${pkgs.adapta-gtk-theme}/share/themes/Adapta/gtk-2.0/gtkrc"
-          "${pkgs.gnome3.gnome-themes-extra}/share/themes/Adwaita/gtk-2.0/gtkrc"
+          "${pkgs.arc-theme}/share/themes/Arc-Darker/gtk-2.0/gtkrc"
+          "${pkgs.gnome3.gnome-themes-extra}/share/themes/Arc-Darker/gtk-2.0/gtkrc"
         ];
     };
 
     systemPackages = with pkgs; [
-      adapta-gtk-theme
-      cursor
-      dzen2
-      feh
-      ffmpeg-full
-      gnome3.adwaita-icon-theme
-      gnome3.networkmanagerapplet
-      gnome-themes-extra
+      arc-theme
       imagemagick
-      imlib2
-      librsvg
-      libsForQt5.qtstyleplugins
-      manpages
       papirus-icon-theme
       pulsemixer
-      qt5.qtgraphicaleffects
-      sddm-chili
-      stdmanpages
       xsel
-      zathura
+      ffmpeg-full
+      mupdf
+      dunst
     ];
   };
 
   services.xbanish.enable = true;
 
-  services.gnome3.gnome-keyring.enable = true;
+  # Enable the X11 windowing system.
+  services.xserver.enable = true;
+  services.xserver.layout = "us";
+  services.xserver.xkbOptions = "eurosign:e";
 
-  services.xserver = {
-    enable = true;
+  # Xmonad
+  services.xserver.windowManager.xmonad.enable = true;
+  services.xserver.windowManager.xmonad.enableContribAndExtras = true;
 
-    libinput.enable = true;
+  # LightDM
+  services.xserver.displayManager.defaultSession = "none+xmonad";
+  services.xserver.displayManager.lightdm.enable = true;
 
-    displayManager.sddm = {
-      enable = true;
-      theme = "chili";
-    };
-  };
 }

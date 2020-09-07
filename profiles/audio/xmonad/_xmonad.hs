@@ -121,13 +121,13 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     -- Multimedia keys
     --
      -- XF86AudioLowerVolume
-     , ((0            , 0x1008ff11), spawn "amixer set Master 5%-")
+     , ((0            , 0x1008ff11), spawn "pactl set-sink-volume 0 -5%")
      -- XF86AudioRaiseVolume
-     , ((0            , 0x1008ff13), spawn "amixer set Master 5%+")
+     , ((0            , 0x1008ff13), spawn "pactl set-sink-volume 0 +5%")
      -- XF86AudioMute
-     , ((0            , 0x1008ff12), spawn "amixer set Master 0%")
+     , ((0            , 0x1008ff12), spawn "pactl set-sink-volume 0 0%")
      -- XF86AudioMute
-     , ((shiftMask    , 0x1008ff12), spawn "amixer set Master 100%")
+     , ((shiftMask    , 0x1008ff12), spawn "pactl set-sink-volume 0 100%")
      -- XF86AudioNext
      , ((0            , 0x1008ff17), spawn "playerctl next")
      -- XF86AudioPrev

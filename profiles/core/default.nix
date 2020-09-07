@@ -2,7 +2,19 @@
 let inherit (lib) fileContents;
 
 in
-{
+  {
+
+  nix.binaryCaches = [
+    "https://feeld-nixcache.s3.amazonaws.com/"
+    "https://cache.nixos.org/"
+  ];
+
+  nix.binaryCachePublicKeys = [
+    "feeld-circleci:Rgj3MboxJuJerz4vLK8srQS4uJ41cesRwq1dF5SPXho="
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+  ];
+
+
   nix.package = pkgs.nixFlakes;
 
   nix.systemFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
@@ -12,6 +24,7 @@ in
   environment = {
 
     systemPackages = with pkgs; [
+      atool # Work with compressed files
       binutils
       coreutils
       curl
@@ -20,100 +33,43 @@ in
       dosfstools
       fd
       git
+      gnumake
       gotop
       gptfdisk
+      haskellPackages.wai-app-static
+      htop
       iputils
       jq
       moreutils
+      ncdu # NCurses Disk Usage
+      # duf
       nmap
       ripgrep
       utillinux
+      linuxPackages.cpupower
+      vis
+      wget
       whois
+      kitty
     ];
 
-    shellInit = ''
-      export STARSHIP_CONFIG=${
-        pkgs.writeText "starship.toml"
-        (fileContents ./starship.toml)
-      }
-    '';
-
-    shellAliases =
-      let ifSudo = lib.mkIf config.security.sudo.enable;
-      in
-      {
-        # quick cd
-        ".." = "cd ..";
-        "..." = "cd ../..";
-        "...." = "cd ../../..";
-        "....." = "cd ../../../..";
-
-        # git
-        g = "git";
-
-        # grep
-        grep = "rg";
-        gi = "grep -i";
-
-        # internet ip
-        myip = "dig +short myip.opendns.com @208.67.222.222 2>&1";
-
-        # nix
-        n = "nix";
-        np = "n profile";
-        ni = "np install";
-        nr = "np remove";
-        ns = "n search --no-update-lock-file";
-        nf = "n flake";
-        srch = "ns nixpkgs";
-        nrb = ifSudo "sudo nixos-rebuild";
-
-        # sudo
-        s = ifSudo "sudo -E ";
-        si = ifSudo "sudo -i";
-        se = ifSudo "sudoedit";
-
-        # top
-        top = "gotop";
-
-        # systemd
-        ctl = "systemctl";
-        stl = ifSudo "s systemctl";
-        utl = "systemctl --user";
-        ut = "systemctl --user start";
-        un = "systemctl --user stop";
-        up = ifSudo "s systemctl start";
-        dn = ifSudo "s systemctl stop";
-        jtl = "journalctl";
-
-      };
-
-  };
-
-  fonts = {
-    fonts = with pkgs; [ powerline-fonts dejavu_fonts ];
-
-    fontconfig.defaultFonts = {
-
-      monospace = [ "DejaVu Sans Mono for Powerline" ];
-
-      sansSerif = [ "DejaVu Sans" ];
-
-    };
+    # shellInit = ''
+    #   export STARSHIP_CONFIG=${
+    #     pkgs.writeText "starship.toml"
+    #     (fileContents ./starship.toml)
+    #   }
+    # '';
   };
 
   nix = {
 
-    autoOptimiseStore = true;
-
-    gc.automatic = true;
-
+    autoOptimiseStore  = true;
+    gc.automatic       = true;
     optimise.automatic = true;
 
     useSandbox = true;
 
     allowedUsers = [ "@wheel" ];
-
     trustedUsers = [ "root" "@wheel" ];
 
     extraOptions = ''
@@ -123,25 +79,23 @@ in
 
   };
 
-  programs.bash = {
-    promptInit = ''
-      eval "$(${pkgs.starship}/bin/starship init bash)"
-    '';
-    shellInit = ''
-      eval "$(${pkgs.direnv}/bin/direnv hook bash)"
-    '';
+  fonts = {
+    enableFontDir = true;
+    enableGhostscriptFonts = true;
+    fonts = with pkgs; [
+      anonymousPro
+      terminus_font
+      inconsolata
+      ubuntu_font_family
+    ];
   };
+
 
   security = {
-
     hideProcessInformation = true;
-
     protectKernelImage = true;
-
   };
 
-  services.earlyoom.enable = true;
-
-  users.mutableUsers = false;
-
+  users.mutableUsers = true;
+  zramSwap.enable = true;
 }

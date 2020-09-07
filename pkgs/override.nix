@@ -6,9 +6,6 @@ pkgs:
 with pkgs;
 [
   starship
-  element-desktop
-  discord
-  signal-desktop
   dhall
   nixpkgs-fmt
 ]
